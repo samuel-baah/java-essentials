@@ -6,18 +6,18 @@ const scoreText = document.getElementById("score");
 const progressBarFull = document.getElementById("progressBarFull");
 
 let currentQuestion = {};
-let accetingAnswers = true;
+let accetingAnswers = false;
 let scroe =0;
 let questionCounter = 0;
 let availableQuestion = [];
 
 let questions = [
     {
-        question: 'Inside which HTML element do we put the JavaScript??',
-        choice1: '<script>',
-        choice2: '<javascript>',
-        choice3: '<js>',
-        choice4: '<scripting>',
+        question: "Inside which HTML element do we put the JavaScript??",
+        choice1: "<script>",
+        choice2: "<javascript>",
+        choice3: "<js>",
+        choice4: "<scripting>",
         answer: 1,
     },
     {
@@ -52,13 +52,18 @@ startGame = () => {
 
 getNewQuestion = () => {
     if (availableQuesions.length === 0 || questionCounter >= MAX_QUESTIONS) {
+        localStorage.setItem("mostRecentScore", score);
         //go to the end page
         return window.location.assign('/end.html');
     }
     questionCounter++;
+    progressText.innerText = `Question ${questionCounter}/${MAX_QUESTIONS}`;
+    //Update the progress bar
+    progressBarFull.style.width = `${(questionCounter / MAX_QUESTIONS) * 100}%`;
+  
     const questionIndex = Math.floor(Math.random() * availableQuesions.length);
     currentQuestion = availableQuesions[questionIndex];
-    question.innerText = currentQuestion.question["choice"+number];
+    question.innerText = currentQuestion.question;
 
     choices.forEach((choice) => {
         const number = choice.dataset['number'];
@@ -79,6 +84,10 @@ choices.forEach((choice) => {
 
         const classToApply =
         selectedAnswer == currentQuestion.answer ? "correct" : "incorrect";
+
+        if (classToApply === "correct") {
+            incrementScore(CORRECT_BONUS);
+          }
       
         selectedChoice.parentElement.classList.add(classToApply);
 
